@@ -2,21 +2,44 @@
 {% load i18n %}
 {% load url from future %}
 
-{% block content_title %}<h2>{% blocktrans with user.username as username %}Account &raquo; {{ username }}{% endblocktrans %}</h2>{% endblock %}
+{% block title %}Change email{% endblock %}
+
+{% block styles %}
+@media only screen and (min-width: 64.063em){
+	form p{
+		
+	}
+}
+{% endblock %}
 
 {% block content %}
-<form action="" method="post">
-  <ul id="box-nav">
-    <li class="first"><a href="{% url 'userena_profile_detail' user.username %}"><span>{% trans 'View profile' %}</span></a></li>
-    <li><a href="{% url 'userena_profile_edit' user.username %}">{% trans "Edit profile" %}</a></li>
-    <li><a href="{% url 'userena_password_change' user.username %}">{% trans "Change password" %}</a></li>
-    <li class="last selected"><a href="{% url 'userena_email_change' user.username %}">{% trans "Change email" %}</a></li>
-  </ul>
+
+
+<div class="row">
+	<div class="large-10 medium-8 small-12 columns">
+		<h2>{% blocktrans with profile.user.username as username %}Account &raquo; {{ username }}{% endblocktrans %}</h2>
+	</div>
+	
+	<div class="large-2 medium-4 small-12 columns">
+		<a class="button right small-12" href="{% url 'userena_profile_detail' user.username %}">{% trans '&laquo; Back' %}</a>
+	</div>
+	
+	
+</div>
+
+<div class="row">
+	<div class="small-12 columns">
+	<h4>Change email address</h4>
+<form class="large-12 small-12" action="" method="post">
   {% csrf_token %}
   <fieldset>
-    <legend>{% trans "Change email address" %}</legend>
+    <div class="small-12 large-6">
     {{ form.as_p }}
+    </div>
+  <input class="button large-3 small-12" type="submit" value="{% trans 'Change email' %}" />
+  
   </fieldset>
-  <input type="submit" value="{% trans "Change email" %}" />
 </form>
+</div>
+</div>
 {% endblock %}

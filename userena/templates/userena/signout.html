@@ -2,8 +2,13 @@
 {% load i18n %}
 
 {% block title %}{% trans "Signed out" %}{% endblock %}
-{% block content_title %}<h2>{% trans "You have been signed out" %}.</h2>{% endblock %}
+
 
 {% block content %}
-<p>{% trans "You have been signed out. Till we meet again." %}</p>
+<div class="row">
+	<div class="large-12">
+		<h2>You have been signed out</h2>
+		<p>You have been signed out. <a href="{% url 'userena_signin' %}">Login again</a></p>
+	</div>
+</div>
 {% endblock %}

@@ -16,11 +16,11 @@ USERENA_REDIRECT_ON_SIGNOUT = getattr(settings,
 
 USERENA_SIGNIN_REDIRECT_URL = getattr(settings,
                                       'USERENA_SIGNIN_REDIRECT_URL',
-                                      '/accounts/%(username)s/')
+                                      '/home/')#'/accounts/%(username)s/')
 
 USERENA_ACTIVATION_REQUIRED = getattr(settings,
                                       'USERENA_ACTIVATION_REQUIRED',
-                                      True)
+                                      False)
 
 USERENA_ACTIVATION_DAYS = getattr(settings,
                                   'USERENA_ACTIVATION_DAYS',
@@ -57,7 +57,7 @@ USERENA_USE_HTTPS = getattr(settings,
 
 USERENA_MUGSHOT_GRAVATAR = getattr(settings,
                                    'USERENA_MUGSHOT_GRAVATAR',
-                                   True)
+                                   False)
 
 USERENA_MUGSHOT_GRAVATAR_SECURE = getattr(settings,
                                           'USERENA_MUGSHOT_GRAVATAR_SECURE',
@@ -65,11 +65,11 @@ USERENA_MUGSHOT_GRAVATAR_SECURE = getattr(settings,
 
 USERENA_MUGSHOT_DEFAULT = getattr(settings,
                                   'USERENA_MUGSHOT_DEFAULT',
-                                  'identicon')
+                                  '/media/mugshots/default.png')
 
 USERENA_MUGSHOT_SIZE = getattr(settings,
                                'USERENA_MUGSHOT_SIZE',
-                               80)
+                               200)
 
 USERENA_MUGSHOT_CROP_TYPE = getattr(settings,
                                     'USERENA_MUGSHOT_CROP_TYPE',
@@ -85,7 +85,7 @@ USERENA_DEFAULT_PRIVACY = getattr(settings,
 
 USERENA_DISABLE_PROFILE_LIST = getattr(settings,
                                        'USERENA_DISABLE_PROFILE_LIST',
-                                       False)
+                                       True)
 
 USERENA_DISABLE_SIGNUP = getattr(settings,
                                  'USERENA_DISABLE_SIGNUP',
@@ -109,7 +109,7 @@ USERENA_PROFILE_DETAIL_TEMPLATE = getattr(
 USERENA_PROFILE_LIST_TEMPLATE = getattr(
     settings, 'USERENA_PROFILE_LIST_TEMPLATE', 'userena/profile_list.html')
 
-USERENA_HIDE_EMAIL = getattr(settings, 'USERENA_HIDE_EMAIL', False)
+USERENA_HIDE_EMAIL = getattr(settings, 'USERENA_HIDE_EMAIL', True)
 
 USERENA_HTML_EMAIL = getattr(settings, 'USERENA_HTML_EMAIL', False)
 

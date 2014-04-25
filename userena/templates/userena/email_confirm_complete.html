@@ -3,7 +3,12 @@
 
 {% block title %}{% trans "Email changed!" %}{% endblock %}
 
-{% block content_title %}<h2>{% trans 'New email' %}</h2>{% endblock %}
+
 {% block content %}
-<p>{% blocktrans with site.name as site %}Your new email address is saved. You can continue using {{ site }} with this email.{% endblocktrans %}</p>
+<div class="row">
+<div class="small-12 columns">
+	<h2>{% trans 'New email' %}</h2>
+	<p>{% blocktrans with site.name as site %}Your new email address is saved. You can continue using {{ site }} with this email.{% endblocktrans %}</p>
+</div>
+</div>
 {% endblock %}

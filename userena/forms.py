@@ -25,20 +25,21 @@ class SignupForm(forms.Form):
     Also requires the password to be entered twice.
 
     """
+
     username = forms.RegexField(regex=USERNAME_RE,
                                 max_length=30,
                                 widget=forms.TextInput(attrs=attrs_dict),
                                 label=_("Username"),
                                 error_messages={'invalid': _('Username must contain only letters, numbers, dots and underscores.')})
-    email = forms.EmailField(widget=forms.TextInput(attrs=dict(attrs_dict,
-                                                               maxlength=75)),
+    email = forms.EmailField(widget=forms.TextInput(attrs={'type':'email',
+                                                               }),
                              label=_("Email"))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict,
                                                            render_value=False),
-                                label=_("Create password"))
+                                label=_("Password"))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict,
                                                            render_value=False),
-                                label=_("Repeat password"))
+                                label=_("Retype password"))
 
     def clean_username(self):
         """
@@ -135,7 +136,7 @@ def identification_field_factory(label, error_required):
 
     """
     return forms.CharField(label=label,
-                           widget=forms.TextInput(attrs=attrs_dict),
+                           widget=forms.TextInput(attrs={'placeholder':'username','required':'required'}),
                            max_length=75,
                            error_messages={'required': _("%(error)s") % {'error': error_required}})
 
@@ -147,7 +148,7 @@ class AuthenticationForm(forms.Form):
     identification = identification_field_factory(_(u"Email or username"),
                                                   _(u"Either supply us with your email or username."))
     password = forms.CharField(label=_("Password"),
-                               widget=forms.PasswordInput(attrs=attrs_dict, render_value=False))
+                               widget=forms.PasswordInput(attrs={'placeholder':'password','required':'required'}, render_value=False))
     remember_me = forms.BooleanField(widget=forms.CheckboxInput(),
                                      required=False,
                                      label=_(u'Remember me for %(days)s') % {'days': _(userena_settings.USERENA_REMEMBER_ME_DAYS[0])})

@@ -1,32 +1,147 @@
 {% extends 'userena/base_userena.html' %}
+{% load static %}
 {% load i18n %}
 {% load url from future %}
 
 {% block title %}{% trans "Signin" %}{% endblock %}
+{% block head %}
+	
+	
+	<link href="{% static 'django_facebook/css/facebook.css' %}" type="text/css" rel="stylesheet" media="all" />
+	{% include 'django_facebook/_facebook_js.html' %}
+{% endblock %}
+
+{% block styles %} 
+
+body{
+	background:url( {% static "assets/img/bg7.jpg"  %} ) no-repeat top center;
+	background-attachment:fixed;
+	height:100%;
+	
+}
+
+input{
+	margin:0;padding:0;
+}
+
+#spacemaker{
+	height:140px;
+}
+
+h1{
+	color:#ffffff;
+	text-align:center;
+}
+
+
+	
+#registration{
+	position:fixed;
+	bottom:0;
+
+}
+
+.errorlist{
+	display:none;
+}
+#id_remember_me{
+	margin-bottom:0.5rem;
+}
+
+[for="id_remember_me"]{
+	font-size:1.1rem;
+}
+
+form{
+	background:transparent;
+}
+@media only screen and (max-width: 64em) {
+	#spacemaker{
+		height:60px;
+	}
+	
+	h1{
+		font-size:50px;
+	}
+	
+}
+
+{% endblock %}
+
+
+{% block navbar %}
+
+{% endblock %}
+
 
 {% block content %}
-<form action="" method="post">
-  {% csrf_token %}
-  <fieldset>
-    <legend>{% trans "Signin" %}</legend>
-    {{ form.non_field_errors }}
-    {% for field in form %}
-    {{ field.errors }}
-    {% comment %} Displaying checkboxes differently {% endcomment %}
-    {% if field.name == 'remember_me' %}
-    <p class="checkbox">
-    <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
-    </p>
-    {% else %}
-    <p>
-    {{ field.label_tag }}
-    {{ field }}
-    </p>
-    {% endif %}
-    {% endfor %}
-  </fieldset>
-  <input type="submit" value="{% trans "Signin" %}" />
-  <p class="forgot-password"><a href="{% url 'userena_password_reset' %}" title="{% trans 'Forgot your password?' %}">{% trans "Forgot your password?" %}</a></p>
-  {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
-</form>
+
+<div class="row" id="spacemaker">
+	{% if form.errors %}
+		<div data-alert class="alert-box alert radius">
+			<strong>Incorrect username or password. Please try again.</strong>
+			<a href="#" class="close">&times;</a>
+		</div>
+	{% endif %}
+</div>
+
+<div class="row">
+	<div class="large-4 small-12 columns large-offset-4">
+		<h1 class="white">Edu-Street</h1>
+		<form action="" method="post">
+		{% csrf_token %}
+
+
+			{{ form.non_field_errors }}
+			{% for field in form %}
+			{{ field.errors }}
+			{% comment %} Displaying checkboxes differently {% endcomment %}
+			{% if field.name == 'remember_me' %}
+			<p class="checkbox">
+			<label style="color:white;"  for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
+			</p>
+			{% else %}
+			<p>
+			{# field.label_tag #}
+			{{ field }}
+			</p>
+			{% endif %}
+			{% endfor %}
+
+			<input type="submit" class="button small-12"  value="{% trans 'Signin' %}" />
+			<p class="forgot-password"><a style="font-size:1.1rem;" href="{% url 'userena_password_reset' %}" title="{% trans 'Forgot your password?' %}">{% trans "Forgot your password?" %}</a></p>
+			{% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+		</form>
+
+	</div>
+</div>
+
+<div class="row">
+	<div class="large-4 small-12 columns large-offset-4">
+		<form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
+			<input type="hidden" value="/home/" name="next" />
+			<input type="hidden" value="{{ request.path }}" name="register_next" />
+			<input type="hidden" value="{{ request.path }}" name="error_next" />
+			<input type="hidden" value="1" name="connect" />
+			{% csrf_token %}
+			<input onclick="F.connect(this.parentNode); return false;" type="image" src="{{ STATIC_URL }}django_facebook/images/facebook_login.png" />
+			<!--<a onclick="F.connect(this.parentNode); return false;" href="javascript:void(0);">Connect</a>-->
+		</form>
+	</div>
+</div>
+
+
+
+
+<div class="row" id="registration">
+	<div class="small-12 large-12 columns">
+		<a href="{% url 'userena_signup' %}" id="register_link" class="button small-12 large-2 small-centered">Register</a>
+	</div>
+</div>
+		
+
 {% endblock %}
+
+{% block footer %}{% endblock %}
+
+

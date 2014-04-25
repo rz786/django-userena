@@ -1,22 +1,118 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
+{% load static %}
+<!doctype html>
 
-<html lang="en">
+<html class="no-js" lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>{% block title %}Userena{% endblock %}</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="shortcut icon" href='{% static "assets/img/favicon.ico"  %}' />
+	<link rel="stylesheet" type="text/css" href='{% static "assets/css/foundation.css" %}' />
+	<link rel="stylesheet" type="text/css" href='{% static "assets/foundation-icons/foundation-icons.css" %}' />
+	<link rel="stylesheet" type="text/css" href='{% static "assets/css/mainbase.css" %}' />
+	<script src='{% static "assets/js/vendor/modernizr.js" %}' ></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="{% static 'assets/js/ajax.js' %}"></script>
+	<title>Edu-Street |
+        {% block title %}{% endblock %}</title>
+	{% block head %}
+	
+	{% endblock %}
+	<style type="text/css">
+		body{
+			min-height: 400px;
+			
+		}
+		#homepage{
+			padding-left:0;
+		}
+		#logo{
+			width:43px;
+		}
+		form{
+			background: #f3f3f3;
+		}
+		input[type="search"]{
+			background: #fff url( /static/assets/img/search-icon-smaller.png ) no-repeat right;
+			padding-right: 3px;
+		}
+		#mainbase_container{
+			min-height:580px;
+			padding-bottom: 200px;
+		}
+		{% block styles %} {% endblock %}
+	</style>
+		
   {% block meta %}{% endblock %}
+  
 </head>
 <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
-  <div id="body">
-    {% block body %}
-      <div class="content_title">
-        {% block content_title %}{% endblock %}
-      </div>
-      <div class="content">
-        {% block content %}{% endblock %}
-      </div>
-    {% endblock %}
-  </div>
+	{% block navbar %}
+		<div class="fixed">
+			<nav class="top-bar"  data-topbar data-options="is_hover: false">
+				<ul class="title-area">
+					<li class="name"><h1><a id="homepage" href="{% url 'homepage' %}"><img id="logo" src='{% static "assets/img/thelogo.png"  %}'><strong>Edu-Street</strong></a></h1></li>
+					<li class="toggle-topbar menu-icon"><a>menu</a></li>
+				</ul>
+				
+				<section class="top-bar-section">
+					<ul class="left">
+						<li class="divider"></li>
+						<li><a href="{% url 'all_courses' %}">Courses</a></li>
+						<li class="divider"></li>
+						<li><a href="/forum">Forum</a></li>
+						<li class="divider"></li>
+						{% if profile.is_instructor %}
+							<li><a class="button radius success hide-for-medium-only" href="{% url 'create_course' %}"><strong>Create new Course</strong></a></li>
+						{% endif %}
+						
+						
+					</ul>
+					<ul class="right">
+						<li class="has-form">
+							<div class="row collapse">
+								<div class="large-12 small-12 columns">
+									{% csrf_token %}
+									<input type="search" placeholder="Search a Course" id="search" name="search" >
+									<ul id="search-results">
+										
+									</ul>
+								</div>
+							</div>
+							
+						</li>
+						<li class="divider"></li>
+						{% if user.is_authenticated %}
+							<li class="has-dropdown">
+								<a class="hide-for-medium-only"><img id="mugshot" src="{{ profile.get_mugshot_url }}" /><strong> {{ user.username }}</strong></a>
+								<a class="show-for-medium-only"><img id="mugshot" src="{{ profile.get_mugshot_url }}" /></a>
+								<ul class="dropdown">
+									<li><a class="button tiny success show-for-medium-only" href="{% url 'create_course' %}"><strong>Create new Course</strong></a></li>
+									<li><a href="{% url 'userena_profile_detail' user.username %}">View Profile</a></li>
+									<li><a href="{% url 'userena_signout' %}">Log out</a></li>
+								</ul>
+							</li>
+						{% else %}
+							<li><a class="button" href="{% url 'userena_signin' %}"><strong>Login</strong></a></li>
+						{% endif %}
+						<li style="margin-right:5px;" class="divider"></li>
+					</ul>
+				</section>
+			</nav>
+		</div>
+	{% endblock %}
+	
+    <div id="mainbase_container" class="small-12 columns" style="">
+		{% block content %}{% endblock %}
+	</div>
+	{% block footer %}
+		{% include 'footer.html' %}
+	{% endblock %}
+	
+	<script src='{% static "assets/js/vendor/jquery.js" %}' ></script>
+	<script src='{% static "assets/js/foundation.min.js" %}' ></script>
+	<script>
+		$(document).foundation();
+		{% block jquery_stuff %}{% endblock %}
+	</script>
 </body>
 </html>

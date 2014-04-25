@@ -2,9 +2,14 @@
 {% load i18n %}
 
 {% block title %}{% trans "Email verification failed." %}{% endblock %}
-{% block content_title %}<h2>{% trans "Your email could not be verified..." %}</h2>{% endblock %}
+
 
 {% block content %}
-<p>{% trans "Your email could not be verified..." %}</p>
-<p>{% trans "You could try changing it again in your account settings." %}</p>
+<div class="row">
+<div class="small-12 columns">
+	<h2>{% trans "Sorry, your email could not be verified..." %}</h2>
+
+	<p>{% trans "You could try changing it again in your account settings." %}</p>
+</div>
+</div>
 {% endblock %}

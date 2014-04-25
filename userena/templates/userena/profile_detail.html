@@ -1,58 +1,187 @@
-{% extends 'userena/base_userena.html' %}
+{% extends 'mainbase_with_sidepanel.html' %}
+{% load static %}
 {% load i18n %}
 {% load url from future %}
+{% block static_inclusion %}
+<link rel="stylesheet" type="text/css" href='{% static "assets/css/multiple_tabs.css" %}' />
+{% endblock %}
 
-{% block title %}{% blocktrans with profile.user.username as username %}{{ username }}'s profile.{% endblocktrans %}{% endblock %}
-{% block content_title %}<h2>{{ profile.user.username }} {% if profile.user.get_full_name %}({{ profile.user.get_full_name }}){% endif %}</h2>{% endblock %}
+{% block title %}{% blocktrans with thisprofile.user.username as username %}{{ username }}'s profile.{% endblocktrans %}{% endblock %}
+{% block styles %}
+.course_list{
+	list-style:none;
+}
+.course_list li{
+	background:#f3f3f3;
+}
+{% endblock %}
 
 {% block content %}
-  <div class="white-box">
-    {% block profile_navigation %}
-      {% comment %}Dirty hack. Will use django-guardian in the future.{% endcomment %}
-      {% if user.username == profile.user.username %}
-        <ul id="box-nav">
-          {% block profile_navigation_items %}
-            <li><a href="{% url 'userena_profile_detail' user.username %}">{% trans "View profile" %}</a></li>
-            <li><a href="{% url 'userena_profile_edit' user.username %}">{% trans "Edit details" %}</a></li>
-            <li><a href="{% url 'userena_password_change' user.username %}">{% trans "Change password" %}</a></li>
-            <li><a href="{% url 'userena_email_change' user.username %}">{% trans "Change email" %}</a></li>
-          {% endblock %}
-        </ul>
-      {% endif %}
-    {% endblock %}
+<div class="row" style="background:#eee;border:1px solid #bbb;margin-top:3px;">
 
-    <div id="details">
-      {% block profile_details %}
-        <img class="mugshot" src="{{ profile.get_mugshot_url }}" alt="{% trans "Your mugshot" %}" />
-        <dl>
-          {% block profile_definition_list %}
-            {% if profile.user.get_full_name %}
-              <dt>{% trans "Name" %}</dt>
-              <dd>{{ profile.user.get_full_name }}</dd>
-            {% endif %}
-            {% if profile.user.email and not hide_email %}
-              <dt>{% trans "Email" %}</dt>
-              <dd>{{ profile.user.email }}</dd>
-            {% endif %}
-            {% if profile.age %}
-              <dt>{% trans "Age" %}</dt>
-              <dd>{{ profile.age }}</dd>
-            {% endif %}
-            {% if profile.website %}
-              <dt>{% trans "Website" %}</dt>
-              <dd>{{ profile.website|urlize }}</dd>
-            {% endif %}
-            {% if profile.location %}
-              <dt>{% trans "Location" %}</dt>
-              <dd>{{ profile.location }}</dd>
-            {% endif %}
-            {% if profile.about_me %}
-              <dt>{% trans "About me" %}</dt>
-              <dd>{{ profile.about_me }}</dd>
-            {% endif %}
-          {% endblock %}
-        </dl>
-      {% endblock %}
-    </div>
-  </div>
+	<div class="large-3 medium-3 small-4 columns">
+		<img class="mugshot" src="{{ thisprofile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
+	</div>
+	
+	<div class="large-9 medium-9 small-8 columns">
+		<div class="row">
+			<div  class="large-8 medium-7 small-12 columns">
+				<h3 style="line-height:1.1;" > {% if thisprofile.user.get_full_name %}{{ thisprofile.user.get_full_name }}{% endif %}
+				{% if thisprofile.is_instructor %}<img data-tooltip class="has-tip" title="Instructor" style="width:22px;position:relative;top:-2px;left:0;" src="{% static 'assets/img/star2.png' %}" />{% endif %}
+				</h3> 
+				<h4 style="line-height:1.0;" class="hide-for-small-only subheader">({{ thisprofile.user.username }})</h4>
+				
+				
+				<!-- Progress Bar-->
+				
+				<div  data-tooltip class="progress small-12 large-8 {{colour}} has-tip round" title="Score: {{points}} points" style="border:1px solid #bbb;">
+					<span class="meter" style="width: {{ percent }}%;"></span>
+				</div>{{points}} Points
+			
+				<!-- end of progressbar -->
+			</div>
+			
+			
+		
+		
+			<div class="large-4 medium-5 small-12 columns">
+				{% block profile_navigation %}
+					{% if user.username == thisprofile.user.username %}
+						<a href="#" data-dropdown="box-nav" class="button small right dropdown" style="float:left;margin-top:1px;">Edit Details</a>
+						
+						<ul id="box-nav" data-dropdown-content class="f-dropdown">
+							{% block profile_navigation_items %}
+							{% comment %}
+							<li><a href="{% url 'userena_profile_detail' user.username %}">{% trans "View profile" %}</a></li>
+							{% endcomment %}
+							<li><a href="{% url 'userena_profile_edit' user.username %}">{% trans "Edit Profile" %}</a></li>
+							<li><a href="{% url 'userena_password_change' user.username %}">{% trans "Change password" %}</a></li>
+							<li><a href="{% url 'userena_email_change' user.username %}">{% trans "Change email" %}</a></li>
+							{% endblock %}
+						</ul>
+					{% endif %}
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+
+</div>	
+
+    
+
+<div style="margin-top:10px;" id="details" class="row">
+
+<div class="small-12">
+
+	<dl class="tabs" data-tab>
+		<dd class="active small-12 large-3"><a href="#info">Personal Information</a></dd>
+		{% if thisprofile.is_instructor %}
+		<dd class=" small-12 large-3"><a href="#courses">Courses by {{ thisprofile.user.username }}</a></dd>
+		{% endif %}
+		<dd class="small-12 large-3"><a href="#courses_taken">Courses taken</a></dd>
+		<dd class="small-12 large-3"><a href="#badges">Badges</a></dd>
+	</dl>
+	
+	<div class="tabs-content">
+		
+		<div class="content active" id="info">
+		
+		<div class="small-12 columns">
+			{% block profile_details %}
+
+			<dl>
+				{% block profile_definition_list %}
+					{% if thisprofile.user.get_full_name %}
+						<dt>{% trans "Name" %}</dt>
+						<dd>{{ thisprofile.user.get_full_name }}</dd>
+					{% endif %}
+					
+					{% if thisprofile.user.email and not hide_email %}
+						<dt>{% trans "Email" %}</dt>
+						<dd>{{ thisprofile.user.email }}</dd>
+					{% endif %}
+					
+					{% if thisprofile.gender %}
+						<dt>{% trans "Gender" %}</dt>
+						<dd>{{ thisprofile.gender }}</dd>
+					{% endif %}
+					
+					{% if thisprofile.age %}
+						<dt>{% trans "Age" %}</dt>
+						<dd>{{ thisprofile.age }}</dd>
+					{% endif %}
+					
+					{% if thisprofile.website %}
+						<dt>{% trans "Website" %}</dt>
+						<dd>{{ thisprofile.website|urlize }}</dd>
+					{% endif %}
+					
+					{% if thisprofile.location %}
+						<dt>{% trans "Location" %}</dt>
+						<dd>{{ thisprofile.location }}</dd>
+					{% endif %}
+					{% if thisprofile.about_me %}
+						<dt>{% trans "About me" %}</dt>
+						<dd>{{ thisprofile.about_me|truncatewords:50 }}</dd>
+					{% endif %}
+				{% endblock %}
+			</dl>
+			{% endblock %}
+		</div>
+	
+		</div>
+		
+		{% if thisprofile.is_instructor %}
+		<div class="content" id="courses">
+		
+		<div class="small-12 columns">
+			<ul class="course_list small-block-grid-4 medium-block-grid-6 large-block-grid-6">
+			{% for course in courses %}
+				<li style="border:1px solid #ccc;"><a href="{{ course.get_absolute_url }}"><img src="{{ course.display_photo.url }}" /></a><p style="text-align:center;"><a href="{{ course.get_absolute_url }}" >{{ course.title }}</a></p></li>
+			{% endfor %}
+			</ul>
+		</div>
+		
+		</div>
+		
+		{% endif %}
+		<div class="content" id="courses_taken">
+		
+		<div class="small-12 columns">
+			{% if courses_taken %}
+			<ul class="course_list small-block-grid-4 medium-block-grid-6 large-block-grid-6">
+			
+			{% for taken_course in courses_taken %}
+				<li style="border:1px solid #ccc;"><a href="{{ taken_course.get_absolute_url }}"><img src="{{taken_course.display_photo.url}}" /></a><p style="text-align:center;"><a href="{{ taken_course.get_absolute_url }}">{{ taken_course.title }}</a></p></li>
+			{% endfor %}
+			</ul>
+			{% else %}
+				<p> No courses taken.</p>
+			{% endif %}
+			
+		</div>
+		
+		</div>
+		
+		<div class="content" id="badges">
+		
+		<div class="small-12 columns">
+			{% if badges %}
+				<ul class="small-block-grid-3 medium-block-grid-5 large-block-grid-6">
+				{% for badge in badges %}
+					<li><a data-tooltip class="has-tip" title="{{ badge.description }}" href="{{ badge.get_absolute_url }}"><img src="{{ badge.icon.url }}" /></a></li>
+				{% endfor %}
+				</ul>
+			{% else %}
+				<p style="margin-bottom:50px;">No Badges earned</p>
+			{% endif %}
+		</div>
+		
+		</div>
+		
+	</div>
+
+</div>
+</div>
+
 {% endblock %}

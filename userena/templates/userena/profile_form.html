@@ -4,22 +4,49 @@
 
 {% block title %}{% trans "Account setup" %}{% endblock %}
 
-{% block content_title %}<h2>{% blocktrans with profile.user.username as username %}Account &raquo; {{ username }}{% endblocktrans %}</h2>{% endblock %}
+{% block styles %}
+
+@media only screen and (min-width: 64.063em){
+	form p{
+		width:50%;
+	}
+}
+
+{% endblock %}
 
 {% block content %}
+<div class="row">
+	<div class="large-10 medium-8 small-12 columns">
+		<h2>{% blocktrans with profile.user.username as username %}Account &raquo; {{ username }}{% endblocktrans %}</h2>
+	</div>
+	
+	<div class="large-2 medium-4 small-12 columns">
+		<a style="margin-top:5px;" class="button right small-12" href="{% url 'userena_profile_detail' user.username %}">{% trans '&laquo; Back' %}</a>
+	</div>
+	
+	
+</div>
 
-<form action="" enctype="multipart/form-data" method="post">
-  <ul id="box-nav">
-    <li class="first"><a href="{% url 'userena_profile_detail' user.username %}"><span>{% trans 'View profile' %}</span></a></li>
-    <li class="selected"><a href="{% url 'userena_profile_edit' user.username %}">{% trans "Edit profile" %}</a></li>
-    <li><a href="{% url 'userena_password_change' user.username %}">{% trans "Change password" %}</a></li>
-    <li class="last"><a href="{% url 'userena_email_change' user.username %}">{% trans "Change email" %}</a></li>
-  </ul>
-  {% csrf_token %}
-  <fieldset>
-    <legend>{% trans "Edit Profile" %}</legend>
-    {{ form.as_p }}
-  </fieldset>
-  <input type="submit" value="{% trans "Save changes" %}" />
-</form>
+
+  
+    
+   
+<div class="row">
+	<div class="small-12 columns">
+	
+	<h4>{% trans "Edit Profile" %}</h5>
+  
+		<form class="large-12 small-12" action="" enctype="multipart/form-data" method="post">
+			{% csrf_token %}
+			<fieldset>
+			
+			{{ form.as_p }}
+			
+			
+			</fieldset>
+			<input class="button large-2 small-12" type="submit" value="{% trans 'Save changes' %}" />
+		</form>
+
+	</div>
+</div>
 {% endblock %}

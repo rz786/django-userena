@@ -26,6 +26,9 @@ from guardian.decorators import permission_required_or_403
 
 import warnings
 
+from course.models import Course, CourseWeek
+from badges2.models import UserBadge
+
 class ExtraContextTemplateView(TemplateView):
     """ Add extra context to a simple template view """
     extra_context = None
@@ -376,7 +379,7 @@ def disabled_account(request, username, template_name, extra_context=None):
 
     ``profile``
         Profile of the viewed user.
-    
+
     """
     user = get_object_or_404(get_user_model(), username__iexact=username)
 
@@ -388,7 +391,7 @@ def disabled_account(request, username, template_name, extra_context=None):
     extra_context['profile'] = user.get_profile()
     return ExtraContextTemplateView.as_view(template_name=template_name,
                                             extra_context=extra_context)(request)
-    
+
 @secure_required
 def signin(request, auth_form=AuthenticationForm,
            template_name='userena/signin_form.html',
@@ -434,6 +437,7 @@ def signin(request, auth_form=AuthenticationForm,
         Form used for authentication supplied by ``auth_form``.
 
     """
+
     form = auth_form()
 
     if request.method == 'POST':
@@ -733,10 +737,10 @@ def profile_detail(request, username,
         Instance of the currently viewed ``Profile``.
 
     """
-    user = get_object_or_404(get_user_model(),
-                             username__iexact=username)
+    user = get_object_or_404(get_user_model(),username__iexact=username)
 
     profile_model = get_profile_model()
+
     try:
         profile = user.get_profile()
     except profile_model.DoesNotExist:
@@ -744,9 +748,47 @@ def profile_detail(request, username,
 
     if not profile.can_view_profile(request.user):
         raise PermissionDenied
-    if not extra_context: extra_context = dict()
-    extra_context['profile'] = user.get_profile()
+    if not extra_context:
+        extra_context = dict()
+
+    gender = user.get_profile().gender
+    courses = Course.objects.filter(creator=user)
+
+    #courses_taken = Course.objects.filter(taken_by=user)
+    courses_taken = user.Takes_Course.all()
+    badges = UserBadge.objects.filter(held_by=user)
+
+    #points related calculations
+
+    points = user.get_profile().points
+    percent_complete=0
+    if points<=1000:
+        upper_limit=1000
+        percent_complete=(points/float(upper_limit))*100
+        colour =""
+
+    elif points>1000 and points<=5000:
+        upper_limit=5000
+        percent_complete=(points/float(upper_limit))*100
+        colour="success"
+    else:
+        upper_limit=20000
+        percent_complete=(points/float(upper_limit))*100
+        colour="alert"
+
+
+
+    extra_context['thisprofile'] = user.get_profile()
+    extra_context['profile'] = request.user.get_profile()
     extra_context['hide_email'] = userena_settings.USERENA_HIDE_EMAIL
+    extra_context['gender'] = gender
+    extra_context['points'] = points
+    extra_context['percent'] = percent_complete
+    extra_context['colour'] = colour
+    extra_context['courses'] = courses
+    extra_context['courses_taken'] = courses_taken
+    extra_context['badges'] = badges
+
     return ExtraContextTemplateView.as_view(template_name=template_name,
                                             extra_context=extra_context)(request)
 
